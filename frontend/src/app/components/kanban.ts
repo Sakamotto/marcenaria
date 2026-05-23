@@ -21,6 +21,10 @@ interface KanbanColumn {
           <h1 class="gradient-text">Quadro Kanban</h1>
           <p>Arraste e solte os cartões para atualizar o status dos projetos.</p>
         </div>
+        <div class="kanban-scroll-hint">
+          <span>Deslize para o lado para ver mais colunas</span>
+          <span class="arrow">➡️</span>
+        </div>
       </div>
 
       <div class="kanban-board">
@@ -69,12 +73,46 @@ interface KanbanColumn {
       flex-direction: column;
       gap: 24px;
     }
+    .kanban-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
     .kanban-header h1 {
       font-size: 32px;
       margin-bottom: 6px;
     }
     .kanban-header p {
       color: hsl(var(--text-muted));
+    }
+    .kanban-scroll-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      color: hsl(var(--text-muted));
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+    .kanban-scroll-hint .arrow {
+      display: inline-block;
+      animation: slide-arrow 1.5s infinite ease-in-out;
+    }
+    @keyframes slide-arrow {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(4px);
+      }
     }
     
     .card-project-name {

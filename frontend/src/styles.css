@@ -186,6 +186,32 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px 0 20px 0;
   min-height: calc(100vh - 200px);
   align-items: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+/* Custom horizontal scrollbar for Webkit browsers */
+.kanban-board::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanban-board::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+}
+
+.kanban-board::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: var(--transition-smooth);
+}
+
+.kanban-board::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .kanban-column {
