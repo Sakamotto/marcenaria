@@ -1,10 +1,16 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../db';
 
-export const getTasks = async (req: Request, res: Response) => {
+export const getTasks = async (req: any, res: Response) => {
   const { projectId, completed, dueDateStart, dueDateEnd } = req.query;
   try {
-    const where: any = {};
+    const where: any = {
+      project: {
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    };
     if (projectId) {
       where.projectId = parseInt(String(projectId));
     }
@@ -42,11 +48,18 @@ export const getTasks = async (req: Request, res: Response) => {
   }
 };
 
-export const getTaskById = async (req: Request, res: Response) => {
+export const getTaskById = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const task = await prisma.task.findUnique({
-      where: { id: parseInt(id) },
+    const task = await prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
       include: {
         project: {
           select: { name: true },
@@ -65,7 +78,7 @@ export const getTaskById = async (req: Request, res: Response) => {
   }
 };
 
-export const createTask = async (req: Request, res: Response) => {
+export const createTask = async (req: any, res: Response) => {
   const { projectId, title, description, dueDate } = req.body;
 
   if (!projectId || !title) {
@@ -73,6 +86,20 @@ export const createTask = async (req: Request, res: Response) => {
   }
 
   try {
+    // Valida se o projeto pertence à marcenaria do usuário
+    const project = await prisma.project.findFirst({
+      where: {
+        id: parseInt(projectId),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!project) {
+      return res.status(403).json({ error: 'Acesso negado ao projeto.' });
+    }
+
     const task = await prisma.task.create({
       data: {
         projectId: parseInt(projectId),
@@ -88,11 +115,26 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTask = async (req: Request, res: Response) => {
+export const updateTask = async (req: any, res: Response) => {
   const { id } = req.params;
   const { title, description, dueDate, completed } = req.body;
 
   try {
+    const taskExists = await prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      }
+    });
+
+    if (!taskExists) {
+      return res.status(404).json({ error: 'Tarefa não encontrada.' });
+    }
+
     const task = await prisma.task.update({
       where: { id: parseInt(id) },
       data: {
@@ -109,11 +151,18 @@ export const updateTask = async (req: Request, res: Response) => {
   }
 };
 
-export const toggleTask = async (req: Request, res: Response) => {
+export const toggleTask = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const currentTask = await prisma.task.findUnique({
-      where: { id: parseInt(id) },
+    const currentTask = await prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!currentTask) {
@@ -132,9 +181,24 @@ export const toggleTask = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteTask = async (req: Request, res: Response) => {
+export const deleteTask = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
+    const taskExists = await prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      }
+    });
+
+    if (!taskExists) {
+      return res.status(404).json({ error: 'Tarefa não encontrada.' });
+    }
+
     await prisma.task.delete({
       where: { id: parseInt(id) },
     });

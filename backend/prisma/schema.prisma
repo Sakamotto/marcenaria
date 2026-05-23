@@ -7,8 +7,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+  clients   Client[]
+}
+
 model User {
   id        Int      @id @default(autoincrement())
+  tenantId  Int
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   email     String   @unique
   password  String
   role      String   @default("ADMIN") // ADMIN, CARPENTER
@@ -18,6 +29,8 @@ model User {
 
 model Client {
   id          Int       @id @default(autoincrement())
+  tenantId    Int
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   name        String
   phone       String
   email       String?

@@ -5,20 +5,37 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="login-container">
-      <div class="glass-card login-card animate-fade-in">
-        <div class="login-header">
-          <h2 class="gradient-primary-text">CRM Marcenaria</h2>
-          <p>Gerenciamento de Projetos e Orçamentos</p>
+    <div class="register-container">
+      <div class="glass-card register-card animate-fade-in">
+        <div class="register-header">
+          <h2 class="gradient-primary-text">Nova Conta SaaS</h2>
+          <p>Cadastre sua marcenaria e comece a gerenciar hoje mesmo</p>
         </div>
         
-        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
           <div class="form-group">
-            <label class="form-label" for="email">E-mail</label>
+            <label class="form-label required" for="marcenariaName">Nome da Marcenaria</label>
+            <input 
+              type="text" 
+              id="marcenariaName" 
+              name="marcenariaName" 
+              class="form-input" 
+              [(ngModel)]="marcenariaName" 
+              required 
+              #marcenariaNameCtrl="ngModel"
+              placeholder="Ex: Marcenaria Sakamotto & Filhos"
+            />
+            <div *ngIf="marcenariaNameCtrl.invalid && (marcenariaNameCtrl.touched || marcenariaNameCtrl.dirty)" class="form-error-msg">
+              ⚠️ O nome da marcenaria é obrigatório.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required" for="email">E-mail do Administrador</label>
             <input 
               type="email" 
               id="email" 
@@ -26,12 +43,17 @@ import { AuthService } from '../services/auth';
               class="form-input" 
               [(ngModel)]="email" 
               required 
-              placeholder="ex: admin@marcenaria.com"
+              email
+              #emailCtrl="ngModel"
+              placeholder="ex: contato@marcenaria.com"
             />
+            <div *ngIf="emailCtrl.invalid && (emailCtrl.touched || emailCtrl.dirty)" class="form-error-msg">
+              ⚠️ Insira um e-mail válido para a conta.
+            </div>
           </div>
           
           <div class="form-group">
-            <label class="form-label" for="password">Senha</label>
+            <label class="form-label required" for="password">Senha de Acesso</label>
             <input 
               type="password" 
               id="password" 
@@ -39,8 +61,13 @@ import { AuthService } from '../services/auth';
               class="form-input" 
               [(ngModel)]="password" 
               required 
-              placeholder="Digite sua senha"
+              minlength="6"
+              #passwordCtrl="ngModel"
+              placeholder="Mínimo 6 caracteres"
             />
+            <div *ngIf="passwordCtrl.invalid && (passwordCtrl.touched || passwordCtrl.dirty)" class="form-error-msg">
+              ⚠️ A senha é obrigatória e deve ter pelo menos 6 caracteres.
+            </div>
           </div>
           
           <div class="error-message" *ngIf="errorMessage()">
@@ -49,21 +76,21 @@ import { AuthService } from '../services/auth';
           
           <button 
             type="submit" 
-            class="btn btn-primary login-btn" 
-            [disabled]="loading() || !loginForm.valid"
+            class="btn btn-primary register-btn" 
+            [disabled]="loading() || !registerForm.valid"
           >
-            {{ loading() ? 'Entrando...' : 'Entrar' }}
+            {{ loading() ? 'Criando Conta...' : 'Criar Minha Marcenaria' }}
           </button>
         </form>
-        
-        <div class="register-hint">
-          Não tem uma conta? <a routerLink="/register">Cadastre sua marcenaria</a>
+
+        <div class="login-hint">
+          Já tem uma conta registrada? <a routerLink="/login">Faça Login</a>
         </div>
       </div>
     </div>
   `,
   styles: [`
-    .login-container {
+    .register-container {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -71,25 +98,25 @@ import { AuthService } from '../services/auth';
       background: radial-gradient(circle at center, hsl(220, 30%, 98%) 0%, hsl(220, 20%, 92%) 100%);
       padding: 20px;
     }
-    .login-card {
+    .register-card {
       width: 100%;
-      max-width: 420px;
+      max-width: 480px;
       padding: 40px;
     }
-    .login-header {
+    .register-header {
       text-align: center;
       margin-bottom: 32px;
     }
-    .login-header h2 {
+    .register-header h2 {
       font-size: 28px;
       font-weight: 800;
       margin-bottom: 8px;
     }
-    .login-header p {
+    .register-header p {
       color: hsl(var(--text-muted));
       font-size: 14px;
     }
-    .login-btn {
+    .register-btn {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
@@ -106,45 +133,51 @@ import { AuthService } from '../services/auth';
       text-align: center;
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
-    .register-hint {
+    .login-hint {
       text-align: center;
       margin-top: 24px;
       font-size: 14px;
       color: hsl(var(--text-muted));
     }
-    .register-hint a {
+    .login-hint a {
       color: hsl(var(--primary));
       font-weight: 600;
       text-decoration: none;
     }
-    .register-hint a:hover {
+    .login-hint a:hover {
       text-decoration: underline;
+    }
+    .form-error-msg {
+      color: #ef4444;
+      font-size: 11px;
+      margin-top: 4px;
     }
   `]
 })
-export class Login {
+export class Register {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  protected marcenariaName = '';
   protected email = '';
   protected password = '';
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected onSubmit() {
-    if (!this.email || !this.password) return;
+    if (!this.marcenariaName || !this.email || !this.password) return;
     
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.authService.login(this.email, this.password).subscribe({
+    this.authService.signup(this.marcenariaName, this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.error || 'Erro ao realizar login. Tente novamente.');
+        this.errorMessage.set(err.error?.error || 'Erro ao criar conta. Tente novamente.');
       }
     });
   }

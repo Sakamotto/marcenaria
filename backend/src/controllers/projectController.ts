@@ -1,11 +1,15 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../db';
 import { getSupabaseClient } from '../supabase';
 
-export const getProjects = async (req: Request, res: Response) => {
+export const getProjects = async (req: any, res: Response) => {
   const { status } = req.query;
   try {
-    const where: any = {};
+    const where: any = {
+      client: {
+        tenantId: req.user.tenantId
+      }
+    };
     if (status) {
       where.status = String(status);
     }
@@ -36,11 +40,16 @@ export const getProjects = async (req: Request, res: Response) => {
   }
 };
 
-export const getProjectById = async (req: Request, res: Response) => {
+export const getProjectById = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const project = await prisma.project.findUnique({
-      where: { id: parseInt(id) },
+    const project = await prisma.project.findFirst({
+      where: {
+        id: parseInt(id),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      },
       include: {
         client: true,
         budgets: {
@@ -100,7 +109,7 @@ export const getProjectById = async (req: Request, res: Response) => {
   }
 };
 
-export const createProject = async (req: Request, res: Response) => {
+export const createProject = async (req: any, res: Response) => {
   const { clientId, name, description, status } = req.body;
 
   if (!clientId || !name) {
@@ -108,6 +117,14 @@ export const createProject = async (req: Request, res: Response) => {
   }
 
   try {
+    // Valida se o cliente pertence à mesma marcenaria
+    const client = await prisma.client.findFirst({
+      where: { id: parseInt(clientId), tenantId: req.user.tenantId }
+    });
+    if (!client) {
+      return res.status(403).json({ error: 'Acesso negado ao cliente.' });
+    }
+
     const project = await prisma.project.create({
       data: {
         clientId: parseInt(clientId),
@@ -126,11 +143,24 @@ export const createProject = async (req: Request, res: Response) => {
   }
 };
 
-export const updateProject = async (req: Request, res: Response) => {
+export const updateProject = async (req: any, res: Response) => {
   const { id } = req.params;
   const { name, description, status } = req.body;
 
   try {
+    const projectExists = await prisma.project.findFirst({
+      where: {
+        id: parseInt(id),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!projectExists) {
+      return res.status(404).json({ error: 'Projeto não encontrado.' });
+    }
+
     const project = await prisma.project.update({
       where: { id: parseInt(id) },
       data: {
@@ -146,7 +176,7 @@ export const updateProject = async (req: Request, res: Response) => {
   }
 };
 
-export const patchProjectStatus = async (req: Request, res: Response) => {
+export const patchProjectStatus = async (req: any, res: Response) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -155,6 +185,19 @@ export const patchProjectStatus = async (req: Request, res: Response) => {
   }
 
   try {
+    const projectExists = await prisma.project.findFirst({
+      where: {
+        id: parseInt(id),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!projectExists) {
+      return res.status(404).json({ error: 'Projeto não encontrado.' });
+    }
+
     const project = await prisma.project.update({
       where: { id: parseInt(id) },
       data: { status },
@@ -166,9 +209,22 @@ export const patchProjectStatus = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteProject = async (req: Request, res: Response) => {
+export const deleteProject = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
+    const projectExists = await prisma.project.findFirst({
+      where: {
+        id: parseInt(id),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!projectExists) {
+      return res.status(404).json({ error: 'Projeto não encontrado.' });
+    }
+
     await prisma.project.delete({
       where: { id: parseInt(id) },
     });

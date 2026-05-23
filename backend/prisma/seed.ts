@@ -6,7 +6,27 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Iniciando o semeamento do banco de dados (Seeding)...');
 
-  // 1. Criar Usuários padrão
+  // 1. Criar Tenants de demonstração
+  console.log('Semeando inquilinos (Tenants)...');
+  const tenant1 = await prisma.tenant.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      name: 'Marcenaria Sakamotto',
+    },
+  });
+
+  const tenant2 = await prisma.tenant.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      id: 2,
+      name: 'Oficina de Móveis Premium',
+    },
+  });
+
+  // 2. Criar Usuários padrão
   const salt = await bcrypt.genSalt(10);
   const hashAdmin = await bcrypt.hash('admin123', salt);
   const hashCarpenter = await bcrypt.hash('oficina123', salt);
@@ -15,6 +35,7 @@ async function main() {
     where: { email: 'admin@marcenaria.com' },
     update: {},
     create: {
+      tenantId: tenant1.id,
       email: 'admin@marcenaria.com',
       password: hashAdmin,
       role: 'ADMIN',
@@ -25,17 +46,30 @@ async function main() {
     where: { email: 'oficina@marcenaria.com' },
     update: {},
     create: {
+      tenantId: tenant1.id,
       email: 'oficina@marcenaria.com',
       password: hashCarpenter,
       role: 'CARPENTER',
     },
   });
 
-  console.log('Usuários padrão semeados com sucesso:');
-  console.log(' - Admin: admin@marcenaria.com / admin123');
-  console.log(' - Marceneiro/Oficina: oficina@marcenaria.com / oficina123');
+  const adminTenant2 = await prisma.user.upsert({
+    where: { email: 'admin@premium.com' },
+    update: {},
+    create: {
+      tenantId: tenant2.id,
+      email: 'admin@premium.com',
+      password: hashAdmin,
+      role: 'ADMIN',
+    },
+  });
 
-  // 2. Limpar dados anteriores (apenas para garantir que o seed não duplique se for executado do zero)
+  console.log('Usuários padrão semeados com sucesso:');
+  console.log(' - Admin Sakamotto: admin@marcenaria.com / admin123');
+  console.log(' - Marceneiro Sakamotto: oficina@marcenaria.com / oficina123');
+  console.log(' - Admin Premium: admin@premium.com / admin123');
+
+  // 3. Limpar dados anteriores (apenas para garantir que o seed não duplique se for executado do zero)
   // Nota: Não limpamos os usuários para permitir upserts limpos.
   const clientCount = await prisma.client.count();
   if (clientCount > 0) {
@@ -43,10 +77,11 @@ async function main() {
     return;
   }
 
-  // 3. Criar Clientes mockados
+  // 4. Criar Clientes mockados
   console.log('Semeando clientes...');
   const client1 = await prisma.client.create({
     data: {
+      tenantId: tenant1.id,
       name: 'Carlos Souza',
       phone: '(11) 98765-4321',
       email: 'carlos.souza@gmail.com',
@@ -56,6 +91,7 @@ async function main() {
 
   const client2 = await prisma.client.create({
     data: {
+      tenantId: tenant1.id,
       name: 'Mariana Santos',
       phone: '(11) 99876-5432',
       email: 'mariana.santos@outlook.com',
@@ -65,10 +101,31 @@ async function main() {
 
   const client3 = await prisma.client.create({
     data: {
+      tenantId: tenant1.id,
       name: 'Ricardo Lima',
       phone: '(21) 97654-3210',
       email: 'ricardo.lima@yahoo.com.br',
       workAddress: 'Rua Voluntários da Pátria, 450 - Botafogo, Rio de Janeiro - RJ',
+    },
+  });
+
+  const clientTenant2 = await prisma.client.create({
+    data: {
+      tenantId: tenant2.id,
+      name: 'Roberto Alencar (Móveis Premium)',
+      phone: '(11) 95555-4444',
+      email: 'roberto.alencar@premium.com',
+      workAddress: 'Al. Lorena, 500 - Jardins, São Paulo - SP',
+    },
+  });
+
+  const projectTenant2 = await prisma.project.create({
+    data: {
+      clientId: clientTenant2.id,
+      name: 'Closet Master Premium',
+      description: 'Closet planejado de alto padrão em MDF lacado.',
+      status: 'Aprovado',
+      totalValue: 35000.0,
     },
   });
 

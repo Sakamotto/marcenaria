@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../db';
 import { getSupabaseClient } from '../supabase';
 
-export const uploadAttachment = async (req: Request, res: Response) => {
+export const uploadAttachment = async (req: any, res: Response) => {
   const { projectId, title } = req.body;
   const file = req.file;
 
@@ -22,18 +22,23 @@ export const uploadAttachment = async (req: Request, res: Response) => {
   }
 
   try {
-    // Valida se o projeto existe
-    const project = await prisma.project.findUnique({
-      where: { id: parseInt(projectId) },
+    // Valida se o projeto pertence à marcenaria do usuário
+    const project = await prisma.project.findFirst({
+      where: {
+        id: parseInt(projectId),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      },
     });
     if (!project) {
-      return res.status(404).json({ error: 'Projeto associado não encontrado.' });
+      return res.status(403).json({ error: 'Acesso negado ao projeto.' });
     }
 
-    // Cria um nome de arquivo único
+    // Cria um nome de arquivo único estruturado com o prefixo do tenant
     const timestamp = Date.now();
     const cleanFileName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
-    const filePath = `project_${projectId}/${timestamp}_${cleanFileName}`;
+    const filePath = `tenant_${req.user.tenantId}/project_${projectId}/${timestamp}_${cleanFileName}`;
 
     // Faz upload para o bucket 'crm-marcenaria-files'
     const { data, error } = await supabase.storage
@@ -79,12 +84,19 @@ export const uploadAttachment = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteAttachment = async (req: Request, res: Response) => {
+export const deleteAttachment = async (req: any, res: Response) => {
   const { id } = req.params;
 
   try {
-    const attachment = await prisma.attachment.findUnique({
-      where: { id: parseInt(id) },
+    const attachment = await prisma.attachment.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!attachment) {
@@ -121,12 +133,19 @@ export const deleteAttachment = async (req: Request, res: Response) => {
   }
 };
 
-export const downloadAttachment = async (req: Request, res: Response) => {
+export const downloadAttachment = async (req: any, res: Response) => {
   const { id } = req.params;
 
   try {
-    const attachment = await prisma.attachment.findUnique({
-      where: { id: parseInt(id) },
+    const attachment = await prisma.attachment.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!attachment) {

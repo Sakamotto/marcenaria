@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../db';
 
-export const getClients = async (req: Request, res: Response) => {
+export const getClients = async (req: any, res: Response) => {
   try {
     const clients = await prisma.client.findMany({
+      where: { tenantId: req.user.tenantId },
       include: {
         _count: {
           select: { projects: true },
@@ -18,11 +19,11 @@ export const getClients = async (req: Request, res: Response) => {
   }
 };
 
-export const getClientById = async (req: Request, res: Response) => {
+export const getClientById = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const client = await prisma.client.findUnique({
-      where: { id: parseInt(id) },
+    const client = await prisma.client.findFirst({
+      where: { id: parseInt(id), tenantId: req.user.tenantId },
       include: {
         projects: {
           orderBy: { createdAt: 'desc' },
@@ -41,7 +42,7 @@ export const getClientById = async (req: Request, res: Response) => {
   }
 };
 
-export const createClient = async (req: Request, res: Response) => {
+export const createClient = async (req: any, res: Response) => {
   const { name, phone, email, workAddress } = req.body;
 
   if (!name || !phone || !workAddress) {
@@ -50,7 +51,13 @@ export const createClient = async (req: Request, res: Response) => {
 
   try {
     const client = await prisma.client.create({
-      data: { name, phone, email, workAddress },
+      data: {
+        name,
+        phone,
+        email,
+        workAddress,
+        tenantId: req.user.tenantId
+      },
     });
     return res.status(201).json(client);
   } catch (error) {
@@ -59,11 +66,19 @@ export const createClient = async (req: Request, res: Response) => {
   }
 };
 
-export const updateClient = async (req: Request, res: Response) => {
+export const updateClient = async (req: any, res: Response) => {
   const { id } = req.params;
   const { name, phone, email, workAddress } = req.body;
 
   try {
+    const clientExists = await prisma.client.findFirst({
+      where: { id: parseInt(id), tenantId: req.user.tenantId }
+    });
+
+    if (!clientExists) {
+      return res.status(404).json({ error: 'Cliente não encontrado.' });
+    }
+
     const client = await prisma.client.update({
       where: { id: parseInt(id) },
       data: { name, phone, email, workAddress },
@@ -75,9 +90,17 @@ export const updateClient = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteClient = async (req: Request, res: Response) => {
+export const deleteClient = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
+    const clientExists = await prisma.client.findFirst({
+      where: { id: parseInt(id), tenantId: req.user.tenantId }
+    });
+
+    if (!clientExists) {
+      return res.status(404).json({ error: 'Cliente não encontrado.' });
+    }
+
     await prisma.client.delete({
       where: { id: parseInt(id) },
     });

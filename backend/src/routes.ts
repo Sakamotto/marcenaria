@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { authenticateToken } from './middleware/auth';
-import { login, me } from './controllers/authController';
+import { login, me, signup } from './controllers/authController';
 import {
   getClients,
   getClientById,
@@ -44,6 +44,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // --- Autenticação ---
 router.post('/auth/login', login);
+router.post('/auth/signup', signup);
 router.get('/auth/me', authenticateToken, me);
 
 // --- Clientes ---

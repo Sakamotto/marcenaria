@@ -8,6 +8,7 @@ export interface User {
   id: number;
   email: string;
   role: string;
+  tenantId: number;
 }
 
 export interface LoginResponse {
@@ -35,6 +36,16 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+      tap((res) => {
+        localStorage.setItem('crm_token', res.token);
+        localStorage.setItem('crm_user', JSON.stringify(res.user));
+        this.currentUser.set(res.user);
+      })
+    );
+  }
+
+  signup(marcenariaName: string, email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/signup`, { marcenariaName, email, password }).pipe(
       tap((res) => {
         localStorage.setItem('crm_token', res.token);
         localStorage.setItem('crm_user', JSON.stringify(res.user));

@@ -6,6 +6,7 @@ export interface AuthRequest extends Request {
     id: number;
     email: string;
     role: string;
+    tenantId: number;
   };
 }
 
@@ -19,7 +20,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
 
   try {
     const secret = process.env.JWT_SECRET || 'super-secret-key-marcenaria-mvp';
-    const verified = jwt.verify(token, secret) as { id: number; email: string; role: string };
+    const verified = jwt.verify(token, secret) as { id: number; email: string; role: string; tenantId: number };
     req.user = verified;
     next();
   } catch (error) {

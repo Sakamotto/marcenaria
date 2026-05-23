@@ -1,9 +1,22 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../db';
 
-export const getBudgetsByProject = async (req: Request, res: Response) => {
+export const getBudgetsByProject = async (req: any, res: Response) => {
   const { projectId } = req.params;
   try {
+    const project = await prisma.project.findFirst({
+      where: {
+        id: parseInt(projectId),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!project) {
+      return res.status(403).json({ error: 'Acesso negado ao projeto.' });
+    }
+
     const budgets = await prisma.budget.findMany({
       where: { projectId: parseInt(projectId) },
       orderBy: { createdAt: 'desc' },
@@ -15,11 +28,18 @@ export const getBudgetsByProject = async (req: Request, res: Response) => {
   }
 };
 
-export const getBudgetById = async (req: Request, res: Response) => {
+export const getBudgetById = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const budget = await prisma.budget.findUnique({
-      where: { id: parseInt(id) },
+    const budget = await prisma.budget.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
       include: {
         project: {
           include: {
@@ -40,7 +60,7 @@ export const getBudgetById = async (req: Request, res: Response) => {
   }
 };
 
-export const createBudget = async (req: Request, res: Response) => {
+export const createBudget = async (req: any, res: Response) => {
   const { projectId, version, items, notes } = req.body;
 
   if (!projectId || !items || !Array.isArray(items)) {
@@ -48,6 +68,20 @@ export const createBudget = async (req: Request, res: Response) => {
   }
 
   try {
+    // Valida o acesso ao projeto
+    const project = await prisma.project.findFirst({
+      where: {
+        id: parseInt(projectId),
+        client: {
+          tenantId: req.user.tenantId
+        }
+      }
+    });
+
+    if (!project) {
+      return res.status(403).json({ error: 'Acesso negado ao projeto.' });
+    }
+
     // Calcula o total geral somando quantidade * valor unitário
     let computedTotal = 0;
     const mappedItems = items.map((item: any) => {
@@ -89,11 +123,18 @@ export const createBudget = async (req: Request, res: Response) => {
   }
 };
 
-export const cloneBudget = async (req: Request, res: Response) => {
+export const cloneBudget = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const sourceBudget = await prisma.budget.findUnique({
-      where: { id: parseInt(id) },
+    const sourceBudget = await prisma.budget.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!sourceBudget) {
@@ -121,11 +162,18 @@ export const cloneBudget = async (req: Request, res: Response) => {
   }
 };
 
-export const approveBudget = async (req: Request, res: Response) => {
+export const approveBudget = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const budget = await prisma.budget.findUnique({
-      where: { id: parseInt(id) },
+    const budget = await prisma.budget.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!budget) {
@@ -161,11 +209,18 @@ export const approveBudget = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteBudget = async (req: Request, res: Response) => {
+export const deleteBudget = async (req: any, res: Response) => {
   const { id } = req.params;
   try {
-    const budget = await prisma.budget.findUnique({
-      where: { id: parseInt(id) },
+    const budget = await prisma.budget.findFirst({
+      where: {
+        id: parseInt(id),
+        project: {
+          client: {
+            tenantId: req.user.tenantId
+          }
+        }
+      },
     });
 
     if (!budget) {
