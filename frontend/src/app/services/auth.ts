@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: string;
   tenantId: number;
+  tenantName?: string;
 }
 
 export interface LoginResponse {

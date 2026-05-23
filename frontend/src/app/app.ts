@@ -10,7 +10,9 @@ import { AuthService } from './services/auth';
   template: `
     <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()">
       <div class="header-logo">
-        <a routerLink="/" class="logo-text gradient-primary-text">Marcenaria CRM</a>
+        <a routerLink="/" class="logo-text gradient-primary-text">
+          {{ authService.currentUser()?.tenantName || 'Marcenaria CRM' }}
+        </a>
       </div>
       
       <nav class="nav-links">

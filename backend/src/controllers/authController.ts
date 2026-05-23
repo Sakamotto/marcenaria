@@ -30,7 +30,10 @@ export const login = async (req: Request, res: Response) => {
       console.log('Usuário admin padrão criado: admin@marcenaria.com / admin123');
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { tenant: true }
+    });
     if (!user) {
       return res.status(401).json({ error: 'Credenciais inválidas.' });
     }
@@ -54,6 +57,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         tenantId: user.tenantId,
+        tenantName: user.tenant.name,
       },
     });
   } catch (error: any) {
@@ -66,12 +70,26 @@ export const me = async (req: any, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, email: true, role: true, tenantId: true },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        tenantId: true,
+        tenant: {
+          select: { name: true }
+        }
+      },
     });
     if (!user) {
       return res.status(404).json({ error: 'Usuário não encontrado.' });
     }
-    return res.json(user);
+    return res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      tenantId: user.tenantId,
+      tenantName: user.tenant.name
+    });
   } catch (error) {
     return res.status(500).json({ error: 'Erro interno do servidor.' });
   }
@@ -124,6 +142,7 @@ export const signup = async (req: Request, res: Response) => {
         email: result.user.email,
         role: result.user.role,
         tenantId: result.user.tenantId,
+        tenantName: result.tenant.name,
       },
       tenant: {
         id: result.tenant.id,
