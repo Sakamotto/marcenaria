@@ -30,7 +30,7 @@ interface KanbanColumn {
       <div class="kanban-board">
         <div 
           class="kanban-column" 
-          *ngFor="let col of columns()"
+          *ngFor="let col of columns(); trackBy: trackByCol"
           (dragover)="onDragOver($event)"
           (drop)="onDrop($event, col.id)"
         >
@@ -44,7 +44,7 @@ interface KanbanColumn {
           <div class="kanban-cards-container">
             <div 
               class="kanban-card" 
-              *ngFor="let project of col.projects"
+              *ngFor="let project of col.projects; trackBy: trackByProject"
               draggable="true"
               (dragstart)="onDragStart($event, project)"
               [routerLink]="['/project', project.id]"
@@ -222,5 +222,13 @@ export class Kanban implements OnInit {
         }
       }
     }
+  }
+
+  protected trackByCol(index: number, col: KanbanColumn): string {
+    return col.id;
+  }
+
+  protected trackByProject(index: number, project: Project): number {
+    return project.id;
   }
 }
