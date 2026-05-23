@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpInterceptorFn, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 export interface User {
   id: number;
@@ -20,7 +21,7 @@ export interface LoginResponse {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly apiUrl = 'http://localhost:3000/api';
+  private readonly apiUrl = API_BASE_URL;
 
   // Signals for state management
   readonly currentUser = signal<User | null>(null);

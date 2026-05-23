@@ -7,6 +7,7 @@ import { BudgetService, Budget } from '../services/budget';
 import { TaskService, Task } from '../services/task';
 import { AttachmentService, Attachment } from '../services/attachment';
 import { forkJoin } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 @Component({
   selector: 'app-project-detail',
@@ -1057,7 +1058,7 @@ export class ProjectDetail implements OnInit {
 
   protected getDownloadUrl(fileId: number): string {
     const token = localStorage.getItem('crm_token') || '';
-    return `http://localhost:3000/api/attachments/${fileId}/download?token=${encodeURIComponent(token)}`;
+    return `${API_BASE_URL}/attachments/${fileId}/download?token=${encodeURIComponent(token)}`;
   }
 
   // --- LIGHTBOX ---

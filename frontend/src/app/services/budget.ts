@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 export interface BudgetItem {
   description: string;
@@ -35,7 +36,7 @@ export interface Budget {
 })
 export class BudgetService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/budgets';
+  private readonly apiUrl = `${API_BASE_URL}/budgets`;
 
   getBudgetsByProject(projectId: number): Observable<Budget[]> {
     return this.http.get<Budget[]>(`${this.apiUrl}/project/${projectId}`);

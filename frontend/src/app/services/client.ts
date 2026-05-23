@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 export interface Client {
   id: number;
@@ -20,7 +21,7 @@ export interface Client {
 })
 export class ClientService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/clients';
+  private readonly apiUrl = `${API_BASE_URL}/clients`;
 
   getClients(): Observable<Client[]> {
     return this.http.get<Client[]>(this.apiUrl);

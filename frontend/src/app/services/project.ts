@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 export interface Project {
   id: number;
@@ -31,7 +32,7 @@ export interface Project {
 })
 export class ProjectService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/projects';
+  private readonly apiUrl = `${API_BASE_URL}/projects`;
 
   getProjects(status?: string): Observable<Project[]> {
     const url = status ? `${this.apiUrl}?status=${encodeURIComponent(status)}` : this.apiUrl;

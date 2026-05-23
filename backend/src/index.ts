@@ -33,9 +33,13 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Inicializa o servidor
-app.listen(port, () => {
-  console.log(`===================================================`);
-  console.log(` Servidor CRM Marcenaria rodando na porta ${port}`);
-  console.log(` URL base: http://localhost:${port}/api`);
-  console.log(`===================================================`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`===================================================`);
+    console.log(` Servidor CRM Marcenaria rodando na porta ${port}`);
+    console.log(` URL base: http://localhost:${port}/api`);
+    console.log(`===================================================`);
+  });
+}
+
+export default app;

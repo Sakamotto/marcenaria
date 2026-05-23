@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../api-config';
 
 export interface Task {
   id: number;
@@ -24,7 +25,7 @@ export interface Task {
 })
 export class TaskService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/tasks';
+  private readonly apiUrl = `${API_BASE_URL}/tasks`;
 
   getTasks(filters?: {
     projectId?: number;
