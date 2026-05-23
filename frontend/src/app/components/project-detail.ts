@@ -269,7 +269,7 @@ import { API_BASE_URL } from '../api-config';
               <div class="upload-actions">
                 <button (click)="cancelUpload()" class="btn btn-secondary btn-sm">Cancelar</button>
                 <button (click)="uploadFile()" class="btn btn-primary btn-sm" [disabled]="uploading()">
-                  {{ uploading() ? 'Enviando...' : 'Enviar para Nuvem' }}
+                  {{ uploading() ? 'Enviando...' : 'Salvar' }}
                 </button>
               </div>
               <div class="error-text" *ngIf="uploadError()">

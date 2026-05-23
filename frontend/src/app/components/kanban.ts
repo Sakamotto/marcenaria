@@ -27,7 +27,13 @@ interface KanbanColumn {
         </div>
       </div>
 
-      <div class="kanban-board">
+      <div 
+        class="kanban-board"
+        (mousedown)="onBoardMouseDown($event)"
+        (mousemove)="onBoardMouseMove($event)"
+        (mouseup)="onBoardMouseUp($event)"
+        (mouseleave)="onBoardMouseLeave($event)"
+      >
         <div 
           class="kanban-column" 
           *ngFor="let col of columns(); trackBy: trackByCol"
@@ -230,5 +236,46 @@ export class Kanban implements OnInit {
 
   protected trackByProject(index: number, project: Project): number {
     return project.id;
+  }
+
+  // Lógica de arrasto horizontal do painel (grab-to-scroll)
+  private isDown = false;
+  private startX = 0;
+  private scrollLeft = 0;
+
+  protected onBoardMouseDown(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    // Se clicou em um card, link ou botão, não ativa o scroll por arrasto
+    if (target.closest('.kanban-card') || target.closest('button') || target.closest('a') || target.closest('.btn')) {
+      return;
+    }
+    
+    const board = event.currentTarget as HTMLElement;
+    this.isDown = true;
+    board.classList.add('grabbing');
+    this.startX = event.pageX - board.offsetLeft;
+    this.scrollLeft = board.scrollLeft;
+  }
+
+  protected onBoardMouseMove(event: MouseEvent) {
+    if (!this.isDown) return;
+    event.preventDefault(); // Impede seleção de texto indesejada
+    
+    const board = event.currentTarget as HTMLElement;
+    const x = event.pageX - board.offsetLeft;
+    const walk = (x - this.startX) * 1.5; // Multiplicador de sensibilidade de velocidade
+    board.scrollLeft = this.scrollLeft - walk;
+  }
+
+  protected onBoardMouseUp(event: MouseEvent) {
+    this.isDown = false;
+    const board = event.currentTarget as HTMLElement;
+    board.classList.remove('grabbing');
+  }
+
+  protected onBoardMouseLeave(event: MouseEvent) {
+    this.isDown = false;
+    const board = event.currentTarget as HTMLElement;
+    board.classList.remove('grabbing');
   }
 }

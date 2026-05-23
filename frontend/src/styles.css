@@ -188,6 +188,12 @@ h1, h2, h3, h4, h5, h6 {
   align-items: flex-start;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  cursor: grab;
+}
+
+.kanban-board.grabbing {
+  cursor: grabbing;
+  user-select: none;
 }
 
 /* Custom horizontal scrollbar for Webkit browsers */
