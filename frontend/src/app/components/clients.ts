@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { ClientService, Client } from '../services/client';
 import { ProjectService } from '../services/project';
 import { Router } from '@angular/router';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxMaskDirective],
+  providers: [provideNgxMask()],
   template: `
     <div class="clients-container animate-fade-in">
       <div class="clients-header">
@@ -102,8 +104,10 @@ import { Router } from '@angular/router';
                   name="phone" 
                   class="form-input" 
                   [(ngModel)]="clientModel.phone" 
-                  required
+                  [required]="true"
                   #phoneCtrl="ngModel"
+                  mask="(00) 0000-0000||(00) 00000-0000"
+                  [dropSpecialCharacters]="false"
                   placeholder="Ex: (21) 97654-3210"
                 />
                 <div *ngIf="phoneCtrl.invalid && (phoneCtrl.touched || phoneCtrl.dirty)" class="form-error-msg">
@@ -448,4 +452,5 @@ export class Clients implements OnInit {
       error: (err) => console.error('Erro ao criar projeto:', err)
     });
   }
+
 }
