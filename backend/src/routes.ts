@@ -38,6 +38,13 @@ import {
   deleteAttachment,
   downloadAttachment,
 } from './controllers/attachmentController';
+import {
+  updateProfile,
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from './controllers/userController';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -82,5 +89,12 @@ router.delete('/tasks/:id', authenticateToken, deleteTask);
 router.post('/attachments', authenticateToken, upload.single('file'), uploadAttachment);
 router.delete('/attachments/:id', authenticateToken, deleteAttachment);
 router.get('/attachments/:id/download', authenticateToken, downloadAttachment);
+
+// --- Usuários e Equipe ---
+router.put('/users/profile', authenticateToken, updateProfile);
+router.get('/users', authenticateToken, getUsers);
+router.post('/users', authenticateToken, createUser);
+router.put('/users/:id', authenticateToken, updateUser);
+router.delete('/users/:id', authenticateToken, deleteUser);
 
 export default router;

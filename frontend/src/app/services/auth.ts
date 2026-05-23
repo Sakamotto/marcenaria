@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../api-config';
 
 export interface User {
   id: number;
+  name: string;
   email: string;
   role: string;
   tenantId: number;
@@ -45,14 +46,39 @@ export class AuthService {
     );
   }
 
-  signup(marcenariaName: string, email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/signup`, { marcenariaName, email, password }).pipe(
+  signup(marcenariaName: string, name: string, email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/signup`, { marcenariaName, name, email, password }).pipe(
       tap((res) => {
         localStorage.setItem('crm_token', res.token);
         localStorage.setItem('crm_user', JSON.stringify(res.user));
         this.currentUser.set(res.user);
       })
     );
+  }
+
+  updateProfile(data: { name: string; email: string; password?: string }): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/profile`, data).pipe(
+      tap((updatedUser) => {
+        localStorage.setItem('crm_user', JSON.stringify(updatedUser));
+        this.currentUser.set(updatedUser);
+      })
+    );
+  }
+
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users`);
+  }
+
+  createUser(user: any): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/users`, user);
+  }
+
+  updateUser(id: number, user: any): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/${id}`, user);
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/${id}`);
   }
 
   logout() {

@@ -35,6 +35,23 @@ import { AuthService } from '../services/auth';
           </div>
 
           <div class="form-group">
+            <label class="form-label required" for="name">Seu Nome Completo</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              class="form-input" 
+              [(ngModel)]="name" 
+              required 
+              #nameCtrl="ngModel"
+              placeholder="Ex: Ricardo Sakamotto"
+            />
+            <div *ngIf="nameCtrl.invalid && (nameCtrl.touched || nameCtrl.dirty)" class="form-error-msg">
+              ⚠️ Seu nome é obrigatório.
+            </div>
+          </div>
+
+          <div class="form-group">
             <label class="form-label required" for="email">E-mail do Administrador</label>
             <input 
               type="email" 
@@ -159,18 +176,19 @@ export class Register {
   private readonly router = inject(Router);
 
   protected marcenariaName = '';
+  protected name = '';
   protected email = '';
   protected password = '';
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected onSubmit() {
-    if (!this.marcenariaName || !this.email || !this.password) return;
+    if (!this.marcenariaName || !this.name || !this.email || !this.password) return;
     
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.authService.signup(this.marcenariaName, this.email, this.password).subscribe({
+    this.authService.signup(this.marcenariaName, this.name, this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/']);

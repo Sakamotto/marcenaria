@@ -21,6 +21,7 @@ export const login = async (req: Request, res: Response) => {
       });
       await prisma.user.create({
         data: {
+          name: 'Administrador Padrão',
           email: 'admin@marcenaria.com',
           password: hashedPassword,
           role: 'ADMIN',
@@ -45,7 +46,7 @@ export const login = async (req: Request, res: Response) => {
 
     const secret = process.env.JWT_SECRET || 'super-secret-key-marcenaria-mvp';
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, tenantId: user.tenantId },
+      { id: user.id, name: user.name, email: user.email, role: user.role, tenantId: user.tenantId },
       secret,
       { expiresIn: '30d' }
     );
@@ -54,6 +55,7 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
         tenantId: user.tenantId,
@@ -72,6 +74,7 @@ export const me = async (req: any, res: Response) => {
       where: { id: req.user.id },
       select: {
         id: true,
+        name: true,
         email: true,
         role: true,
         tenantId: true,
@@ -85,6 +88,7 @@ export const me = async (req: any, res: Response) => {
     }
     return res.json({
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
       tenantId: user.tenantId,
@@ -96,9 +100,9 @@ export const me = async (req: any, res: Response) => {
 };
 
 export const signup = async (req: Request, res: Response) => {
-  const { marcenariaName, email, password } = req.body;
+  const { marcenariaName, name, email, password } = req.body;
 
-  if (!marcenariaName || !email || !password) {
+  if (!marcenariaName || !name || !email || !password) {
     return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
   }
 
@@ -118,6 +122,7 @@ export const signup = async (req: Request, res: Response) => {
 
       const user = await tx.user.create({
         data: {
+          name,
           email,
           password: hashedPassword,
           role: 'ADMIN',
@@ -130,7 +135,7 @@ export const signup = async (req: Request, res: Response) => {
 
     const secret = process.env.JWT_SECRET || 'super-secret-key-marcenaria-mvp';
     const token = jwt.sign(
-      { id: result.user.id, email: result.user.email, role: result.user.role, tenantId: result.user.tenantId },
+      { id: result.user.id, name: result.user.name, email: result.user.email, role: result.user.role, tenantId: result.user.tenantId },
       secret,
       { expiresIn: '30d' }
     );
@@ -139,6 +144,7 @@ export const signup = async (req: Request, res: Response) => {
       token,
       user: {
         id: result.user.id,
+        name: result.user.name,
         email: result.user.email,
         role: result.user.role,
         tenantId: result.user.tenantId,

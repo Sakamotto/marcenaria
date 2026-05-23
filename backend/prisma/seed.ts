@@ -36,6 +36,7 @@ async function main() {
     update: {},
     create: {
       tenantId: tenant1.id,
+      name: 'Ricardo Sakamotto',
       email: 'admin@marcenaria.com',
       password: hashAdmin,
       role: 'ADMIN',
@@ -47,6 +48,7 @@ async function main() {
     update: {},
     create: {
       tenantId: tenant1.id,
+      name: 'Carlos Marceneiro',
       email: 'oficina@marcenaria.com',
       password: hashCarpenter,
       role: 'CARPENTER',
@@ -58,6 +60,7 @@ async function main() {
     update: {},
     create: {
       tenantId: tenant2.id,
+      name: 'Pedro Premium',
       email: 'admin@premium.com',
       password: hashAdmin,
       role: 'ADMIN',

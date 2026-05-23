@@ -12,3 +12,14 @@ export const authGuard = () => {
   router.navigate(['/login']);
   return false;
 };
+
+export const adminGuard = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated() && authService.isAdmin()) {
+    return true;
+  }
+  router.navigate(['/']);
+  return false;
+};
