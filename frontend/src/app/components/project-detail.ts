@@ -18,10 +18,10 @@ import { API_BASE_URL } from '../api-config';
       <!-- Cabeçalho do Projeto -->
       <div class="project-detail-header">
         <div>
-          <div class="project-breadcrumbs">
-            <a routerLink="/kanban">📁 Projetos</a> / <span>{{ project()?.name }}</span>
+          <div class="project-title-row">
+            <a routerLink="/kanban" class="btn-back-arrow" title="Voltar para o Kanban">←</a>
+            <h1 class="gradient-text">{{ project()?.name }}</h1>
           </div>
-          <h1 class="gradient-text">{{ project()?.name }}</h1>
           <p>Cliente: <strong>{{ project()?.client?.name }}</strong> {{ project()?.client?.phone }}</p>
         </div>
 
@@ -339,26 +339,35 @@ import { API_BASE_URL } from '../api-config';
       padding: 0 20px;
     }
     
+    .project-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .btn-back-arrow {
+      color: hsl(var(--text-main));
+      text-decoration: none;
+      font-size: 28px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-back-arrow:hover {
+      transform: translateX(-4px);
+    }
+    
     .project-detail-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 20px;
     }
-    
-    .project-breadcrumbs {
-      font-size: 13px;
-      color: hsl(var(--text-muted));
-      margin-bottom: 8px;
-    }
-    .project-breadcrumbs a {
-      color: hsl(var(--text-muted));
-      text-decoration: none;
-    }
-    .project-breadcrumbs a:hover {
-      text-decoration: underline;
-    }
-    
+
     .project-detail-header h1 {
       font-size: 32px;
       margin-bottom: 6px;
