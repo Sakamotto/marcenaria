@@ -35,7 +35,7 @@ interface KanbanColumn {
         (mouseleave)="onBoardMouseLeave($event)"
       >
         <div 
-          class="kanban-column" 
+          [className]="'kanban-column ' + col.badgeClass.replace('badge-', 'col-')"
           *ngFor="let col of columns(); trackBy: trackByCol"
           (dragover)="onDragOver($event)"
           (drop)="onDrop($event, col.id)"
@@ -120,6 +120,34 @@ interface KanbanColumn {
         transform: translateX(4px);
       }
     }
+    .col-lead {
+      background: rgba(59, 130, 246, 0.06) !important;
+      border: 1px solid rgba(59, 130, 246, 0.15) !important;
+    }
+    .col-envio {
+      background: rgba(168, 85, 247, 0.06) !important;
+      border: 1px solid rgba(168, 85, 247, 0.15) !important;
+    }
+    .col-negoc {
+      background: rgba(234, 179, 8, 0.06) !important;
+      border: 1px solid rgba(234, 179, 8, 0.15) !important;
+    }
+    .col-aprov {
+      background: rgba(34, 197, 94, 0.06) !important;
+      border: 1px solid rgba(34, 197, 94, 0.15) !important;
+    }
+    .col-prod {
+      background: rgba(249, 115, 22, 0.06) !important;
+      border: 1px solid rgba(249, 115, 22, 0.15) !important;
+    }
+    .col-instal {
+      background: rgba(6, 182, 212, 0.06) !important;
+      border: 1px solid rgba(6, 182, 212, 0.15) !important;
+    }
+    .col-final {
+      background: rgba(100, 116, 139, 0.06) !important;
+      border: 1px solid rgba(100, 116, 139, 0.15) !important;
+    }
     
     .card-project-name {
       font-size: 14px;
@@ -151,6 +179,37 @@ interface KanbanColumn {
       font-weight: 700;
       color: #4ade80;
       margin-left: auto;
+    }
+    
+    @media (min-width: 901px) {
+      .kanban-board {
+        height: calc(100vh - 230px) !important;
+        min-height: auto !important;
+      }
+      .kanban-column {
+        max-height: 100% !important;
+      }
+    }
+
+    .kanban-board::-webkit-scrollbar {
+      height: 12px !important;
+    }
+    
+    .kanban-board::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.8) !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+      border-radius: 10px !important;
+    }
+    
+    .kanban-board::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5) !important; /* Elegant slate gray for contrast */
+      border-radius: 10px !important;
+      border: 2px solid transparent !important;
+      background-clip: padding-box !important;
+    }
+    
+    .kanban-board::-webkit-scrollbar-thumb:hover {
+      background: rgba(30, 41, 59, 0.8) !important; /* Sleek dark charcoal on hover */
     }
   `]
 })
