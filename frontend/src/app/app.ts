@@ -8,14 +8,19 @@ import { AuthService } from './services/auth';
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()">
+    <div class="trial-banner no-print font-outfit" *ngIf="authService.isAuthenticated() && isTrialActive()">
+      ⚠️ Você está no período de testes gratuito. Restam {{ getDaysLeft() }} dias.
+      <a routerLink="/plans" class="banner-link">Escolher Plano</a>
+    </div>
+
+    <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()" [style.top]="isTrialActive() ? '45px' : '15px'">
       <div class="header-logo">
-        <a routerLink="/dashboard" class="logo-text gradient-primary-text">
+        <a [routerLink]="isTrialExpired() ? '/plans' : '/dashboard'" class="logo-text gradient-primary-text">
           {{ authService.currentUser()?.tenantName || 'Marcenaria CRM' }}
         </a>
       </div>
       
-      <nav class="nav-links">
+      <nav class="nav-links" *ngIf="!isTrialExpired()">
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           <span class="nav-icon">📊</span> Dashboard
         </a>
@@ -33,7 +38,7 @@ import { AuthService } from './services/auth';
         </a>
       </nav>
       
-      <div class="user-profile-dropdown" (click)="toggleDropdown($event)">
+      <div class="user-profile-dropdown" (click)="toggleDropdown($event)" *ngIf="!isTrialExpired()">
         <button class="dropdown-trigger-btn">
           <span class="user-avatar">👤</span>
           <span class="user-name-text">{{ authService.currentUser()?.name || authService.currentUser()?.email }}</span>
@@ -61,25 +66,69 @@ import { AuthService } from './services/auth';
           </button>
         </div>
       </div>
+
+      <!-- Botão Sair visível apenas se expirado -->
+      <button (click)="logout()" class="dropdown-trigger-btn logout-expired-btn" *ngIf="isTrialExpired()">
+        🚪 Sair
+      </button>
     </header>
     
-    <main class="main-content" [class.authenticated]="authService.isAuthenticated()">
+    <main class="main-content" [class.authenticated]="authService.isAuthenticated()" [style.padding-top]="authService.isAuthenticated() ? (isTrialActive() ? '140px' : '110px') : '20px'">
       <router-outlet></router-outlet>
     </main>
   `,
   styles: [`
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+    }
+    .trial-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 35px;
+      background: linear-gradient(90deg, #f59e0b, #ea580c);
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 1001;
+      gap: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .banner-link {
+      color: #0f172a;
+      text-decoration: underline;
+      font-weight: 800;
+      margin-left: 5px;
+      transition: opacity 0.2s ease;
+    }
+    .banner-link:hover {
+      opacity: 0.8;
+    }
+    .logout-expired-btn {
+      color: #ef4444 !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+      background: rgba(239, 68, 68, 0.05) !important;
+    }
+    .logout-expired-btn:hover {
+      background: rgba(239, 68, 68, 0.1) !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+    }
     .main-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: fixed;
-      top: 15px;
       left: 15px;
       right: 15px;
       height: 70px;
       padding: 0 30px;
       z-index: 1000;
       border-radius: var(--radius-md);
+      transition: top 0.3s ease;
     }
     .logo-text {
       font-family: 'Outfit', sans-serif;
@@ -247,9 +296,7 @@ import { AuthService } from './services/auth';
     }
     .main-content {
       padding: 20px;
-    }
-    .main-content.authenticated {
-      padding-top: 110px; /* Space for the fixed navbar */
+      transition: padding-top 0.3s ease;
     }
     
     @media (max-width: 900px) {
@@ -259,13 +306,13 @@ import { AuthService } from './services/auth';
         padding: 15px;
         gap: 15px;
         position: relative;
-        top: 0;
+        top: 0 !important;
         left: 0;
         right: 0;
         margin-bottom: 20px;
       }
       .main-content.authenticated {
-        padding-top: 20px;
+        padding-top: 20px !important;
       }
       .nav-links {
         flex-wrap: wrap;
@@ -297,5 +344,27 @@ export class App {
 
   protected logout() {
     this.authService.logout();
+  }
+
+  protected isTrialExpired(): boolean {
+    const user = this.authService.currentUser();
+    if (!user || user.tenantPlan !== 'TRIAL') return false;
+    if (!user.trialEndsAt) return false;
+    return new Date() > new Date(user.trialEndsAt);
+  }
+
+  protected isTrialActive(): boolean {
+    const user = this.authService.currentUser();
+    if (!user || user.tenantPlan !== 'TRIAL') return false;
+    if (!user.trialEndsAt) return true;
+    return new Date() <= new Date(user.trialEndsAt);
+  }
+
+  protected getDaysLeft(): number {
+    const user = this.authService.currentUser();
+    if (!user || !user.trialEndsAt) return 0;
+    const diff = new Date(user.trialEndsAt).getTime() - new Date().getTime();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days < 0 ? 0 : days;
   }
 }

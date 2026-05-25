@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { authenticateToken } from './middleware/auth';
-import { login, me, signup } from './controllers/authController';
+import { login, me, signup, subscribe } from './controllers/authController';
+import { handleAsaasWebhook } from './controllers/asaasWebhookController';
 import {
   getClients,
   getClientById,
@@ -53,6 +54,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post('/auth/login', login);
 router.post('/auth/signup', signup);
 router.get('/auth/me', authenticateToken, me);
+router.post('/tenants/subscribe', authenticateToken, subscribe);
+router.post('/webhooks/asaas', handleAsaasWebhook);
 
 // --- Clientes ---
 router.get('/clients', authenticateToken, getClients);

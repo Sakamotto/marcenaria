@@ -11,6 +11,8 @@ export interface User {
   role: string;
   tenantId: number;
   tenantName?: string;
+  tenantPlan?: string;
+  trialEndsAt?: string;
 }
 
 export interface LoginResponse {
@@ -88,6 +90,10 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  subscribe(plan: 'SOLO' | 'PRO', cnpjOrCpf: string, phone: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/tenants/subscribe`, { plan, cnpjOrCpf, phone });
+  }
+
   private loadSession() {
     const token = localStorage.getItem('crm_token');
     const userStr = localStorage.getItem('crm_user');
@@ -95,10 +101,27 @@ export class AuthService {
       try {
         const user = JSON.parse(userStr) as User;
         this.currentUser.set(user);
+        this.refreshProfile();
       } catch (e) {
         this.logout();
       }
     }
+  }
+
+  refreshProfile() {
+    const token = this.getToken();
+    if (!token) return;
+    this.http.get<User>(`${this.apiUrl}/auth/me`).subscribe({
+      next: (user) => {
+        localStorage.setItem('crm_user', JSON.stringify(user));
+        this.currentUser.set(user);
+      },
+      error: (err) => {
+        if (err.status === 401 || err.status === 403) {
+          this.logout();
+        }
+      }
+    });
   }
 
   getToken(): string | null {
@@ -118,7 +141,10 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   }
   return next(req).pipe(
     catchError((error) => {
-      if (error.status === 401 || error.status === 403) {
+      if (error.status === 402) {
+        // Redirecionar para /plans se o trial estiver expirado
+        window.location.href = '/plans';
+      } else if (error.status === 401 || error.status === 403) {
         // Auto logout if unauthorized/forbidden
         localStorage.removeItem('crm_token');
         localStorage.removeItem('crm_user');
