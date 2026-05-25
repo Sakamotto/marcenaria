@@ -10,13 +10,13 @@ import { AuthService } from './services/auth';
   template: `
     <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()">
       <div class="header-logo">
-        <a routerLink="/" class="logo-text gradient-primary-text">
+        <a routerLink="/dashboard" class="logo-text gradient-primary-text">
           {{ authService.currentUser()?.tenantName || 'Marcenaria CRM' }}
         </a>
       </div>
       
       <nav class="nav-links">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           <span class="nav-icon">📊</span> Dashboard
         </a>
         <a routerLink="/kanban" routerLinkActive="active">

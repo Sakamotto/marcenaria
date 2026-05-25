@@ -191,7 +191,7 @@ export class Register {
     this.authService.signup(this.marcenariaName, this.name, this.email, this.password).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading.set(false);

@@ -32,10 +32,13 @@
 }
 
 /* Reset & Base Styles */
-* {
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Desconta a altura do cabeçalho fixo */
+}
+
+*, ::before, ::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {
@@ -532,5 +535,28 @@ textarea.form-input {
   content: ' *';
   color: #ef4444;
   font-weight: bold;
+}
+
+/* Parallax & Floating Micro-animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-15px) scale(1.05); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+  50% { transform: translateY(12px) scale(0.95) rotate(3deg); }
+}
+@keyframes float-mockup {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-0.5deg); }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+.animate-float-slower {
+  animation: float-slower 8s ease-in-out infinite;
+}
+.animate-float-mockup {
+  animation: float-mockup 5s ease-in-out infinite;
 }
 
