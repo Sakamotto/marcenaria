@@ -12,6 +12,7 @@ import { AuthService } from '../services/auth';
     <div class="login-container">
       <div class="glass-card login-card animate-fade-in">
         <div class="login-header">
+          <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="login-logo-img" />
           <h2 class="gradient-primary-text">Marcena.net</h2>
           <p>Gerenciamento de Projetos e Orçamentos</p>
         </div>
@@ -75,6 +76,15 @@ import { AuthService } from '../services/auth';
       width: 100%;
       max-width: 420px;
       padding: 40px;
+    }
+    .login-logo-img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin: 0 auto 16px auto;
+      display: block;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
     }
     .login-header {
       text-align: center;

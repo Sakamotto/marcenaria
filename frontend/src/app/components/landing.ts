@@ -34,10 +34,9 @@ interface FaqItem {
   template: `
     <div class="landing-page-container min-h-screen bg-slate-50/70 text-slate-800 font-sans selection:bg-blue-500/20 selection:text-blue-700">
       
-      <!-- HEADER / NAVBAR -->
       <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">🛠️</span>
+        <div class="flex items-center gap-2.5">
+          <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="w-8 h-8 object-contain rounded-lg shadow-xs" />
           <span class="logo-text text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
             Marcena.net
           </span>
@@ -507,7 +506,7 @@ interface FaqItem {
       <footer class="bg-white border-t border-slate-200/60 py-12 px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div class="flex items-center gap-2">
-            <span class="text-xl">🛠️</span>
+            <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="w-6 h-6 object-contain rounded-md" />
             <span class="font-bold text-slate-700">Marcena.net</span>
           </div>
           <p>&copy; 2026 Marcena.net. Todos os direitos reservados. Feito com paixão para marcenarias brasileiras.</p>

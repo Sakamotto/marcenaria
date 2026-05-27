@@ -15,8 +15,11 @@ import { AuthService } from './services/auth';
 
     <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()" [style.top]="isTrialActive() ? '45px' : '15px'">
       <div class="header-logo">
-        <a [routerLink]="isTrialExpired() ? '/plans' : '/dashboard'" class="logo-text gradient-primary-text">
-          {{ authService.currentUser()?.tenantName || 'Marcena.net' }}
+        <a [routerLink]="isTrialExpired() ? '/plans' : '/dashboard'" class="logo-link">
+          <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="header-logo-img" />
+          <span class="logo-text gradient-primary-text">
+            {{ authService.currentUser()?.tenantName || 'Marcena.net' }}
+          </span>
         </a>
       </div>
       
@@ -129,6 +132,18 @@ import { AuthService } from './services/auth';
       z-index: 1000;
       border-radius: var(--radius-md);
       transition: top 0.3s ease;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .header-logo-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      border-radius: var(--radius-sm);
     }
     .logo-text {
       font-family: 'Outfit', sans-serif;

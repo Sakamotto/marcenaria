@@ -12,6 +12,7 @@ import { AuthService } from '../services/auth';
     <div class="register-container">
       <div class="glass-card register-card animate-fade-in">
         <div class="register-header">
+          <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="register-logo-img" />
           <h2 class="gradient-primary-text">Nova Conta SaaS</h2>
           <p>Cadastre sua marcenaria e comece a gerenciar hoje mesmo</p>
         </div>
@@ -119,6 +120,15 @@ import { AuthService } from '../services/auth';
       width: 100%;
       max-width: 480px;
       padding: 40px;
+    }
+    .register-logo-img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin: 0 auto 16px auto;
+      display: block;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
     }
     .register-header {
       text-align: center;
