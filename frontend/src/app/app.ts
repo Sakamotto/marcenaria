@@ -16,7 +16,7 @@ import { AuthService } from './services/auth';
     <header class="main-header glass-panel no-print" *ngIf="authService.isAuthenticated()" [style.top]="isTrialActive() ? '45px' : '15px'">
       <div class="header-logo">
         <a [routerLink]="isTrialExpired() ? '/plans' : '/dashboard'" class="logo-text gradient-primary-text">
-          {{ authService.currentUser()?.tenantName || 'Marcenaria CRM' }}
+          {{ authService.currentUser()?.tenantName || 'Marcena.net' }}
         </a>
       </div>
       

@@ -1,7 +1,7 @@
 {
   "name": "crm-marcenaria-backend",
   "version": "1.0.0",
-  "description": "Backend API for CRM Marcenaria Management System",
+  "description": "Backend API for Marcena.net Management System",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

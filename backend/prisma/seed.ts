@@ -32,24 +32,24 @@ async function main() {
   const hashCarpenter = await bcrypt.hash('oficina123', salt);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@marcenaria.com' },
+    where: { email: 'admin@marcena.net' },
     update: {},
     create: {
       tenantId: tenant1.id,
       name: 'Ricardo Sakamotto',
-      email: 'admin@marcenaria.com',
+      email: 'admin@marcena.net',
       password: hashAdmin,
       role: 'ADMIN',
     },
   });
 
   const carpenter = await prisma.user.upsert({
-    where: { email: 'oficina@marcenaria.com' },
+    where: { email: 'oficina@marcena.net' },
     update: {},
     create: {
       tenantId: tenant1.id,
       name: 'Carlos Marceneiro',
-      email: 'oficina@marcenaria.com',
+      email: 'oficina@marcena.net',
       password: hashCarpenter,
       role: 'CARPENTER',
     },
@@ -68,8 +68,8 @@ async function main() {
   });
 
   console.log('Usuários padrão semeados com sucesso:');
-  console.log(' - Admin Sakamotto: admin@marcenaria.com / admin123');
-  console.log(' - Marceneiro Sakamotto: oficina@marcenaria.com / oficina123');
+  console.log(' - Admin Sakamotto: admin@marcena.net / admin123');
+  console.log(' - Marceneiro Sakamotto: oficina@marcena.net / oficina123');
   console.log(' - Admin Premium: admin@premium.com / admin123');
 
   // 3. Limpar dados anteriores (apenas para garantir que o seed não duplique se for executado do zero)

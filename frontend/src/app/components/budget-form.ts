@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BudgetService, Budget, BudgetItem } from '../services/budget';
 import { ProjectService, Project } from '../services/project';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-budget-form',
@@ -264,9 +265,9 @@ import { ProjectService, Project } from '../services/project';
     <div class="printable-budget print-only">
       <div class="print-header">
         <div class="print-company-info">
-          <h2>CRM MARCENARIA PRESTIGIO</h2>
+          <h2>{{ authService.currentUser()?.tenantName || 'Marcena.net' }}</h2>
           <p>Móveis Planejados sob Medida de Alta Qualidade</p>
-          <p>Contato: contato&#64;marcenariaprestigio.com.br</p>
+          <p>Contato: {{ authService.currentUser()?.email }}</p>
         </div>
         <div class="print-budget-meta text-right">
           <h1>ORÇAMENTO</h1>
@@ -338,7 +339,7 @@ import { ProjectService, Project } from '../services/project';
       <div class="print-signatures">
         <div class="signature-line">
           <div class="line"></div>
-          <p>Marcenaria CRM</p>
+          <p>{{ authService.currentUser()?.tenantName || 'Marcena.net' }}</p>
         </div>
         <div class="signature-line">
           <div class="line"></div>
@@ -690,6 +691,7 @@ export class BudgetForm implements OnInit {
   private readonly router = inject(Router);
   private readonly budgetService = inject(BudgetService);
   private readonly projectService = inject(ProjectService);
+  protected readonly authService = inject(AuthService);
 
   // States
   protected readonly projectId = signal<number>(0);

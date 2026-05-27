@@ -39,7 +39,7 @@ interface FaqItem {
         <div class="flex items-center gap-2">
           <span class="text-2xl">🛠️</span>
           <span class="logo-text text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
-            CRM Marcenaria
+            Marcena.net
           </span>
         </div>
         <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
@@ -186,7 +186,7 @@ interface FaqItem {
             <div class="bg-white border border-blue-100 shadow-lg rounded-2xl p-8 space-y-6">
               <div class="flex items-center gap-3 pb-4 border-b border-blue-50">
                 <span class="text-2xl">✅</span>
-                <h3 class="text-lg font-bold text-blue-900">Com o CRM Marcenaria</h3>
+                <h3 class="text-lg font-bold text-blue-900">Com o Marcena.net</h3>
               </div>
               <ul class="space-y-4 text-sm text-slate-600">
                 <li class="flex items-start gap-2.5">
@@ -508,9 +508,9 @@ interface FaqItem {
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div class="flex items-center gap-2">
             <span class="text-xl">🛠️</span>
-            <span class="font-bold text-slate-700">CRM Marcenaria SaaS</span>
+            <span class="font-bold text-slate-700">Marcena.net</span>
           </div>
-          <p>&copy; 2026 CRM Marcenaria. Todos os direitos reservados. Feito com paixão para marcenarias brasileiras.</p>
+          <p>&copy; 2026 Marcena.net. Todos os direitos reservados. Feito com paixão para marcenarias brasileiras.</p>
           <div class="flex gap-4">
             <a routerLink="/login" class="hover:underline">Entrar</a>
             <a routerLink="/register" class="hover:underline">Criar Conta</a>

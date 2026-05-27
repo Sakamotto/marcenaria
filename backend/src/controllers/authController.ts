@@ -28,13 +28,13 @@ export const login = async (req: Request, res: Response) => {
       await prisma.user.create({
         data: {
           name: 'Administrador Padrão',
-          email: 'admin@marcenaria.com',
+          email: 'admin@marcena.net',
           password: hashedPassword,
           role: 'ADMIN',
           tenantId: defaultTenant.id
         },
       });
-      console.log('Usuário admin padrão criado: admin@marcenaria.com / admin123');
+      console.log('Usuário admin padrão criado: admin@marcena.net / admin123');
     }
 
     const user = await prisma.user.findUnique({
@@ -273,7 +273,7 @@ export const subscribe = async (req: any, res: Response) => {
       value: planValue,
       nextDueDate: formattedDate,
       cycle: 'MONTHLY',
-      description: `Assinatura ${planName} - CRM Marcenaria`,
+      description: `Assinatura ${planName} - Marcena.net`,
       callback: {
         successUrl: callbackUrl,
         autoRedirect: true

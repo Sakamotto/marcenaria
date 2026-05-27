@@ -12,7 +12,7 @@ import { AuthService } from '../services/auth';
     <div class="login-container">
       <div class="glass-card login-card animate-fade-in">
         <div class="login-header">
-          <h2 class="gradient-primary-text">CRM Marcenaria</h2>
+          <h2 class="gradient-primary-text">Marcena.net</h2>
           <p>Gerenciamento de Projetos e Orçamentos</p>
         </div>
         
@@ -26,7 +26,7 @@ import { AuthService } from '../services/auth';
               class="form-input" 
               [(ngModel)]="email" 
               required 
-              placeholder="ex: admin@marcenaria.com"
+              placeholder="ex: admin@marcena.net"
             />
           </div>
           

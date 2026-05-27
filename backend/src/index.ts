@@ -22,7 +22,7 @@ app.get('/status', (req, res) => {
     status: 'online',
     timestamp: new Date(),
     version: '1.1.0',
-    service: 'CRM Marcenaria API'
+    service: 'Marcena.net API'
   });
 });
 
@@ -36,7 +36,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(port, () => {
     console.log(`===================================================`);
-    console.log(` Servidor CRM Marcenaria rodando na porta ${port}`);
+    console.log(` Servidor Marcena.net rodando na porta ${port}`);
     console.log(` URL base: http://localhost:${port}/api`);
     console.log(`===================================================`);
   });

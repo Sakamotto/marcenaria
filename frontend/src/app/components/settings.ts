@@ -112,7 +112,7 @@ import { AuthService, User } from '../services/auth';
               required
               email
               #emailCtrl="ngModel"
-              placeholder="Ex: carlos@marcenaria.com"
+              placeholder="Ex: carlos@marcena.net"
             />
             <div *ngIf="emailCtrl.invalid && (emailCtrl.touched || emailCtrl.dirty)" class="form-error-msg">
               ⚠️ Insira um e-mail válido.
