@@ -89,6 +89,18 @@ export const createUser = async (req: any, res: Response) => {
   }
 
   try {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: req.user.tenantId }
+    });
+    if (tenant?.plan === 'SOLO') {
+      const userCount = await prisma.user.count({
+        where: { tenantId: req.user.tenantId }
+      });
+      if (userCount >= 1) {
+        return res.status(400).json({ error: 'Seu plano atual permite apenas 1 usuário. Faça upgrade para o plano Pro.' });
+      }
+    }
+
     const userExists = await prisma.user.findUnique({ where: { email } });
     if (userExists) {
       return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });

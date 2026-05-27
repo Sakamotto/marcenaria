@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth';
 
 @Component({
@@ -221,6 +221,7 @@ import { AuthService } from '../services/auth';
 export class Plans implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly currentPlan = signal<string | null>(null);
   protected readonly trialEndsAt = signal<string | null>(null);
@@ -233,6 +234,11 @@ export class Plans implements OnInit {
 
   ngOnInit() {
     this.updateLocalState();
+    this.route.queryParams.subscribe(params => {
+      if (params['upgrade'] === 'PRO') {
+        this.openConfirmModal('PRO');
+      }
+    });
   }
 
   private updateLocalState() {

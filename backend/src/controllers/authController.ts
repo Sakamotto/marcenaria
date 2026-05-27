@@ -257,7 +257,7 @@ export const subscribe = async (req: any, res: Response) => {
       });
     }
 
-    // 3. Criar a Assinatura (Subscription)
+    // 3. Criar ou Atualizar a Assinatura (Subscription)
     const planValue = plan === 'PRO' ? 149.00 : 79.00;
     const planName = plan === 'PRO' ? 'Marcenaria Pro' : 'Marceneiro Solo';
     
@@ -267,43 +267,68 @@ export const subscribe = async (req: any, res: Response) => {
 
     const callbackUrl = process.env.ASAAS_CALLBACK_URL || 'http://localhost:4200/dashboard';
 
-    const subscriptionPayload = {
-      customer: customerId,
-      billingType: 'UNDEFINED',
-      value: planValue,
-      nextDueDate: formattedDate,
-      cycle: 'MONTHLY',
-      description: `Assinatura ${planName} - Marcena.net`,
-      callback: {
-        successUrl: callbackUrl,
-        autoRedirect: true
+    let subscriptionId = user.tenant.asaasSubscriptionId;
+    let subData: any;
+
+    if (subscriptionId) {
+      // Se já existe uma assinatura, atualiza (upgrade/downgrade)
+      const subUpdateRes = await fetch(`${asaasUrl}/subscriptions/${subscriptionId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'access_token': asaasKey
+        },
+        body: JSON.stringify({
+          value: planValue,
+          description: `Assinatura ${planName} - Marcena.net`,
+          updatePendingPayments: true
+        })
+      });
+
+      subData = await subUpdateRes.json();
+      if (!subUpdateRes.ok) {
+        console.error('Erro ao atualizar assinatura no Asaas:', subData);
+        return res.status(400).json({ error: subData.errors?.[0]?.description || 'Erro ao atualizar assinatura no Asaas.' });
       }
-    };
+    } else {
+      // Se não existe, cria uma nova assinatura
+      const subscriptionPayload = {
+        customer: customerId,
+        billingType: 'UNDEFINED',
+        value: planValue,
+        nextDueDate: formattedDate,
+        cycle: 'MONTHLY',
+        description: `Assinatura ${planName} - Marcena.net`,
+        callback: {
+          successUrl: callbackUrl,
+          autoRedirect: true
+        }
+      };
 
-    const subRes = await fetch(`${asaasUrl}/subscriptions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'access_token': asaasKey
-      },
-      body: JSON.stringify(subscriptionPayload)
-    });
+      const subRes = await fetch(`${asaasUrl}/subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'access_token': asaasKey
+        },
+        body: JSON.stringify(subscriptionPayload)
+      });
 
-    const subData: any = await subRes.json();
-    if (!subRes.ok) {
-      console.error('Erro ao criar assinatura no Asaas:', subData);
-      return res.status(400).json({ error: subData.errors?.[0]?.description || 'Erro ao criar assinatura no Asaas.' });
+      subData = await subRes.json();
+      if (!subRes.ok) {
+        console.error('Erro ao criar assinatura no Asaas:', subData);
+        return res.status(400).json({ error: subData.errors?.[0]?.description || 'Erro ao criar assinatura no Asaas.' });
+      }
+      subscriptionId = subData.id;
+
+      // Atualiza o Tenant com a nova assinatura ID
+      await prisma.tenant.update({
+        where: { id: user.tenantId },
+        data: {
+          asaasSubscriptionId: subscriptionId
+        }
+      });
     }
-
-    const subscriptionId = subData.id;
-
-    // Atualiza o Tenant com a assinatura
-    await prisma.tenant.update({
-      where: { id: user.tenantId },
-      data: {
-        asaasSubscriptionId: subscriptionId
-      }
-    });
 
     // 4. Buscar a fatura pendente (primeiro pagamento da assinatura)
     const paymentRes = await fetch(`${asaasUrl}/payments?subscription=${subscriptionId}`, {
