@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache openssl
 COPY package*.json ./
@@ -10,7 +10,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /app
 RUN apk add --no-cache openssl
 COPY package*.json ./
