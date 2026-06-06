@@ -19,8 +19,14 @@ Chart.register(...registerables);
         <p>Acompanhe o andamento dos projetos e tarefas pendentes.</p>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isLoading()" class="loading-overlay glass-card animate-fade-in">
+        <div class="spinner"></div>
+        <p>Carregando informações da marcenaria...</p>
+      </div>
+
       <!-- Resumo de Indicadores -->
-      <div class="metrics-grid">
+      <div [style.display]="isLoading() ? 'none' : 'grid'" class="metrics-grid animate-fade-in">
         <div class="metric-card glass-card border-danger">
           <div class="metric-icon text-danger">⚠️</div>
           <div class="metric-info">
@@ -52,7 +58,7 @@ Chart.register(...registerables);
       </div>
 
       <!-- Seção Principal -->
-      <div class="dashboard-main-grid">
+      <div [style.display]="isLoading() ? 'none' : 'grid'" class="dashboard-main-grid animate-fade-in">
         <!-- Próximas Tarefas -->
         <div class="glass-card tasks-section">
           <div class="section-header">
@@ -318,6 +324,8 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   private dataSubscription?: Subscription;
   private chartInstance?: Chart;
 
+  protected readonly isLoading = signal(true);
+
   protected readonly stats = signal({
     overdueTasks: 0,
     todayTasks: 0,
@@ -329,7 +337,7 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   protected readonly noProjects = signal(false);
 
   ngAfterViewInit() {
-    this.loadData();
+    this.loadData(true);
   }
 
   ngOnDestroy() {
@@ -337,7 +345,11 @@ export class Dashboard implements AfterViewInit, OnDestroy {
     this.chartInstance?.destroy();
   }
 
-  private loadData() {
+  private loadData(showLoader = true) {
+    if (showLoader) {
+      this.isLoading.set(true);
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -389,14 +401,18 @@ export class Dashboard implements AfterViewInit, OnDestroy {
         if (projects.length > 0) {
           this.buildChart(projects);
         }
+        this.isLoading.set(false);
       },
-      error: (err) => console.error('Erro ao carregar dados do dashboard:', err)
+      error: (err) => {
+        console.error('Erro ao carregar dados do dashboard:', err);
+        this.isLoading.set(false);
+      }
     });
   }
 
   protected toggleTask(taskId: number) {
     this.taskService.toggleTask(taskId).subscribe({
-      next: () => this.loadData(),
+      next: () => this.loadData(false),
       error: (err) => console.error('Erro ao alternar status da tarefa:', err)
     });
   }

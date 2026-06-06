@@ -25,14 +25,21 @@ interface KanbanColumn {
           <h1 class="gradient-text">Quadro Kanban</h1>
           <p>Arraste e solte os cartões para atualizar o status dos projetos.</p>
         </div>
-        <div class="kanban-scroll-hint">
+        <div class="kanban-scroll-hint" *ngIf="!isBoardLoading()">
           <span>Deslize para o lado para ver mais colunas</span>
           <span class="arrow">➡️</span>
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isBoardLoading()" class="loading-overlay glass-card animate-fade-in">
+        <div class="spinner"></div>
+        <p>Carregando quadro de projetos...</p>
+      </div>
+
       <div 
-        class="kanban-board"
+        *ngIf="!isBoardLoading()"
+        class="kanban-board animate-fade-in"
         (mousedown)="onBoardMouseDown($event)"
         (mousemove)="onBoardMouseMove($event)"
         (mouseup)="onBoardMouseUp($event)"
@@ -658,6 +665,7 @@ export class Kanban implements OnInit {
   ]);
 
   // Modal signals and state
+  protected readonly isBoardLoading = signal(true);
   protected readonly showModal = signal(false);
   protected readonly selectedColumnId = signal('');
   protected readonly clients = signal<Client[]>([]);
@@ -686,7 +694,7 @@ export class Kanban implements OnInit {
   });
 
   ngOnInit() {
-    this.loadProjects();
+    this.loadProjects(true);
   }
 
   protected openCreateModal(columnId: string) {
@@ -821,7 +829,7 @@ export class Kanban implements OnInit {
     this.projectService.createProject(projectData).subscribe({
       next: () => {
         this.loading.set(false);
-        this.loadProjects();
+        this.loadProjects(false);
         this.closeCreateModal();
       },
       error: (err) => {
@@ -831,7 +839,10 @@ export class Kanban implements OnInit {
     });
   }
 
-  private loadProjects() {
+  private loadProjects(showLoader = true) {
+    if (showLoader) {
+      this.isBoardLoading.set(true);
+    }
     this.projectService.getProjects().subscribe({
       next: (projects) => {
         const updatedColumns = this.columns().map((col) => {
@@ -841,8 +852,12 @@ export class Kanban implements OnInit {
           };
         });
         this.columns.set(updatedColumns);
+        this.isBoardLoading.set(false);
       },
-      error: (err) => console.error('Erro ao carregar projetos no Kanban:', err)
+      error: (err) => {
+        console.error('Erro ao carregar projetos no Kanban:', err);
+        this.isBoardLoading.set(false);
+      }
     });
   }
 
@@ -879,10 +894,10 @@ export class Kanban implements OnInit {
         if (foundProject && foundProject.status !== targetStatus) {
           // Atualiza no backend
           this.projectService.updateProjectStatus(projectId, targetStatus).subscribe({
-            next: () => this.loadProjects(),
+            next: () => this.loadProjects(false),
             error: (err) => {
               console.error('Erro ao atualizar status do projeto no drag & drop:', err);
-              this.loadProjects(); // Reverte se der erro
+              this.loadProjects(false); // Reverte se der erro
             }
           });
         }
