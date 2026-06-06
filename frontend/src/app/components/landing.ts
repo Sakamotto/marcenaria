@@ -34,10 +34,10 @@ interface FaqItem {
   template: `
     <div class="landing-page-container min-h-screen bg-slate-50/70 text-slate-800 font-sans selection:bg-blue-500/20 selection:text-blue-700">
       
-      <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
+      <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
           <img src="marcena_icon_square.png" alt="Logo Marcena.net" class="w-8 h-8 object-contain rounded-lg shadow-xs" />
-          <span class="logo-text text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+          <span class="logo-text text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
             Marcena.net
           </span>
         </div>
@@ -47,12 +47,13 @@ interface FaqItem {
           <a href="#planos" class="hover:text-blue-600 transition-colors">Preços</a>
           <a href="#faq" class="hover:text-blue-600 transition-colors">FAQ</a>
         </nav>
-        <div class="flex items-center gap-3">
-          <a routerLink="/login" class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a routerLink="/login" class="inline-flex items-center justify-center px-2 sm:px-4 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
             Entrar
           </a>
-          <a routerLink="/register" class="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5">
-            Cadastrar Marcenaria
+          <a routerLink="/register" class="inline-flex items-center justify-center px-3 py-1.5 sm:px-5 sm:py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5">
+            <span class="hidden sm:inline">Cadastrar Marcenaria</span>
+            <span class="inline sm:hidden">Cadastrar</span>
           </a>
         </div>
       </header>
@@ -102,7 +103,7 @@ interface FaqItem {
             </div>
 
             <!-- Simplified Kanban Columns Layout -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- Column 1 -->
               <div class="bg-blue-50/40 border border-blue-100 rounded-xl p-3 space-y-3">
                 <div class="flex justify-between items-center">
@@ -366,7 +367,7 @@ interface FaqItem {
             </div>
             
             <!-- Floating badge warning -->
-            <div class="absolute -bottom-4 -left-4 bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-lg flex items-center gap-1.5 border border-red-500/50">
+            <div class="absolute -bottom-4 left-4 right-4 sm:-left-4 sm:right-auto bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-lg flex items-center justify-center gap-1.5 border border-red-500/50">
               <span>🔒</span> Valores e Contatos Ocultados com Sucesso
             </div>
           </div>
