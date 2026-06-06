@@ -65,7 +65,7 @@ interface FaqItem {
             ✨ O único CRM pensado para Marceneiros
           </span>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
-            Do orçamento em 3D à <span class="bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">instalação final</span>.
+            Do orçamento completo à <span class="bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">instalação final</span>.
           </h1>
           <p class="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
             Controle projetos, organize tarefas de produção, envie orçamentos profissionais em PDF e integre sua oficina de forma totalmente segura e visual.
@@ -621,7 +621,7 @@ export class Landing implements OnInit {
   }
 
   protected toggleFaq(index: number) {
-    this.faqItems.update((items) => 
+    this.faqItems.update((items) =>
       items.map((item, i) => i === index ? { ...item, open: !item.open } : item)
     );
   }
