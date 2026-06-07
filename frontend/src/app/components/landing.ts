@@ -517,6 +517,20 @@ interface FaqItem {
           </div>
         </div>
       </footer>
+
+      <!-- Botão Flutuante do WhatsApp -->
+      <a 
+        href="https://wa.me/5527998858031?text=Olá! Gostaria de tirar algumas dúvidas sobre o Marcena.net." 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg shadow-emerald-500/30 transition-all hover:scale-110 active:scale-95 group"
+        title="Falar no WhatsApp"
+      >
+        <svg class="w-7 h-7 fill-current transition-transform group-hover:rotate-12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.012 2c-5.506 0-9.988 4.482-9.988 9.988 0 1.761.459 3.475 1.332 4.992l-1.417 5.176 5.301-1.39a9.923 9.923 0 0 0 4.772 1.21h.004c5.505 0 9.988-4.482 9.988-9.988C22 6.482 17.518 2 12.012 2zm6.012 14.249c-.247.697-1.206 1.285-1.66 1.334-.413.045-.951.071-1.523-.112-.349-.111-.795-.274-1.39-.526-2.544-1.076-4.186-3.666-4.312-3.834-.127-.168-.937-1.246-.937-2.378 0-1.132.59-1.688.801-1.916.211-.228.464-.285.618-.285.154 0 .308.001.442.007.143.007.337-.056.527.408.196.48.67 1.636.729 1.758.059.122.099.263.018.423-.081.161-.122.26-.243.402-.121.142-.254.317-.363.426-.122.122-.25.254-.108.498.142.244.632 1.036 1.357 1.681.933.83 1.718 1.088 1.962 1.21.244.122.385.102.527-.061.142-.163.61-.712.772-.955.162-.244.325-.204.549-.122.224.082 1.42.671 1.664.793.244.122.406.183.467.285.061.102.061.59-.186 1.286z"/>
+        </svg>
+        <span class="absolute inset-0 rounded-full border border-emerald-500/60 animate-ping opacity-75 pointer-events-none" style="animation-duration: 2s;"></span>
+      </a>
     </div>
   `,
   styles: [`
